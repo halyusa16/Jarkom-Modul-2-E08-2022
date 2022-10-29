@@ -1,4 +1,17 @@
+# Jarkom-Modul-2-E08-2022
+Laporan Resmi Praktikum II Jaringan Komputer oleh Kelompok E08
+
+### Kelompok E08, PREFIX IP: 192.196
+
+| **No** | **Nama** | **NRP** | **Kontribusi (No.)** |
+| - | - | - | - |
+| 1. | Halyusa Ard Wahyudi | 5025201088 | 1, 2, dan 7 |
+| 2. | Muhammad Ismail | 5025201223 | 3, 4, 5, dan 6 |
+| 3. | Immanuel Maruli Tua Pardede | 5025201166 | 8, 9, dan 10 |
+
 Twilight (〈黄昏 (たそがれ) 〉, <Tasogare>) adalah seorang mata-mata yang berasal dari negara Westalis. Demi menjaga perdamaian antara Westalis dengan Ostania, Twilight dengan nama samaran Loid Forger (ロイド・フォージャー, Roido Fōjā) di bawah organisasi WISE menjalankan operasinya di negara Ostania dengan cara melakukan spionase, sabotase, penyadapan dan kemungkinan pembunuhan. Berikut adalah peta dari negara Ostania:
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/intro" width=50%>
 
 ## No. 1
 ### Soal
