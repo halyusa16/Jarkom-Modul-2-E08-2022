@@ -17,6 +17,89 @@ Twilight (〈黄昏 (たそがれ) 〉, <Tasogare>) adalah seorang mata-mata yan
 ### Soal
 WISE akan dijadikan sebagai DNS Master, Berlint akan dijadikan DNS Slave, dan Eden akan digunakan sebagai Web Server. Terdapat 2 Client yaitu SSS, dan Garden. Semua node terhubung pada router Ostania, sehingga dapat mengakses internet (1).
 ### Jawaban
+Pertama, kita buat topologi sesuai dengan tuntutan soal. Kemudian, kita atur konfigurasi masing-masing node berikut dengan cara klik kanan pada node tersebut, lalu pilih `Configure` dan `Edit network configuration`.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/1.0.png" width=50%>
+
+<ul>
+
+<li>Ostania</li>
+
+```
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 192.196.1.1
+	netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+	address 192.196.2.1
+	netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+	address 192.196.3.1
+	netmask 255.255.255.0
+```
+
+<li>SSS</li>
+
+```
+auto eth0
+iface eth0 inet static
+	address 192.196.1.2
+	netmask 255.255.255.0
+	gateway 192.196.1.1
+```
+
+<li>Garden</li>
+
+```
+auto eth0
+iface eth0 inet static
+	address 192.196.1.3
+	netmask 255.255.255.0
+	gateway 192.196.1.1
+```
+
+<li>Berlint</li>
+
+```
+auto eth0
+iface eth0 inet static
+	address 192.196.2.2
+	netmask 255.255.255.0
+	gateway 192.196.2.1
+```
+
+<li>Eden</li>
+
+```
+auto eth0
+iface eth0 inet static
+	address 192.196.2.3
+	netmask 255.255.255.0
+	gateway 192.196.2.1
+```
+
+<li>WISE</li>
+
+```
+auto eth0
+iface eth0 inet static
+	address 192.196.3.2
+	netmask 255.255.255.0
+	gateway 192.196.3.1
+```
+
+</ul>
+
+Kemudian, agar dapat mengakses jaringan luar, kita klik kanan pada node Ostania, lalu pilih `Web console` untuk membuka web console dan ketikkan `iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.196.0.0/16`. Selain itu, kita juga perlu mengubah nameserver pada klien (node SSS dan Garden) menggunakan IP DNS yang sama pada node Ostania. Untuk melihatnya, ketikkan command `nano /etc/resolv.conf` pada web console node Ostania dan copy-kan isinya. Kemudian, ketikkan command `nano /etc/resolv.conf` pada web console klien dan ganti isinya dengan yang sudah di-copy tadi. Terakhir, untuk mengecek apakah klien sudah terhubung dengan jaringan luar, ketikkan command `ping google.com` pada web console klien.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/1.1.png" width=50%>
 
 ## No. 2
 ### Soal
