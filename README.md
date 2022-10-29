@@ -253,6 +253,41 @@ Terakhir, lakukan restart aplikasi bind9 dengan mengetik command `service bind9 
 ### Soal
 Karena banyak informasi dari Handler, buatlah subdomain yang khusus untuk operation yaitu operation.wise.yyy.com dengan alias www.operation.wise.yyy.com yang didelegasikan dari WISE ke Berlint dengan IP menuju ke Eden dalam folder operation.
 ### Jawaban
+Pertama, kita buka file `wise.e08.com` dengan command `nano /etc/bind/wise/wise.e08.com`. Kemudian, tambahkan script `operation IN    A       192.196.2.2 ; IP Berlint` di bagian paling bawah script untuk membuat subdomain operation.wise.yyy.com. Kemudian, edit konfigurasi file `named.conf.options` dengan mengetik `nano /etc/bind/named.conf.options`. Jadikan penggalan script **dnssec-validation auto;** sebagai komentar dengan menambahkan "//" di depannya yaitu `//dnssec-validation auto;` dan tambahakan penggalan script `allow-query{any;};` di bawahnya. Terakhir, lakukan restart aplikasi bind9 dengan mengetik command `service bind9 restart` pada web console node WISE.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/6.0.png" width=50%>
+
+Pada node Berlint, kita menambahkan zone baru dengan mengedit file `named.conf.local` pada folder `nano /etc/bind/`. Ketik command `nano /etc/bind/named.conf.local` pada web console node Berlint dan tambahkan script berikut di bagian paling bawah script.
+
+```
+zone "operation.wise.e08.com" {
+    type master;
+    file "/etc/bind/operation/operation.wise.e08.com";
+};
+```
+
+Kita perlu membuat file bernama `operation.wise.e08.com` dengan di folder `/etc/bind/operation/`, untuk itu ketik command `mkdir /etc/bind/operation/` untuk membuat folder operation dan `cp /etc/bind/db.local /etc/bind/operation/operation.wise.e08.com` untuk membuat salinan file `db.local` sebagai file `operation.wise.e08.com`. Kemudian, buka filenya dengan mengetik command `nano /etc/bind/operation/operation.wise.e08.com` dan ganti isinya sesuai dengan script berikut. Perhatikan bahwa IP yang digunakan adalah IP Eden sesuai yang diminta pada soal.
+
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     operation.wise.e08.com. root.operation.wise.e08.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      operation.wise.e08.com.
+@       IN      A       192.196.2.3 ; IP Eden
+www     IN      CNAME   operation.wise.e08.com.
+```
+
+Terakhir, lakukan restart aplikasi bind9 dengan mengetik command `service bind9 restart` pada web console node Berlint. Kemudian, `ping operation.wise.e08.com` dan `ping www.operation.wise.e08.com` pada web console klien untuk mengecek kesuksesannya.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/6.1.png" width=50%>
 
 ## No. 7
 ### Soal
