@@ -143,6 +143,37 @@ Untuk mengecek apakah website utama kita sudah selesai dan bisa diakses oleh kli
 ### Soal
 Setelah itu ia juga ingin membuat subdomain eden.wise.yyy.com dengan alias www.eden.wise.yyy.com yang diatur DNS-nya di WISE dan mengarah ke Eden.
 ### Jawaban
+Pertama, kita buka file `wise.e08.com` dengan command `nano /etc/bind/wise/wise.e08.com`. Kemudian, tambahkan script `eden    IN      A       192.196.2.3 ; IP Eden` di bagian paling bawah script untuk membuat subdomain eden.wise.yyy.com. Lalu, untuk membuat aliasnya, kita perlu membuat zone baru. Ketik command `nano /etc/bind/named.conf.local` untuk membuka file `named.conf.local`, lalu tambahkan script berikut di bagian paling bawah script untuk membuat zone baru subdomain eden.wise.yyy.com.
+
+```
+zone "eden.wise.e08.com" {
+        type master;
+        file "/etc/bind/wise/eden.wise.e08.com";
+};
+```
+
+Sama seperti langkah di nomor 2, kita perlu membuat file baru bernama `eden.wise.e08.com` di folder `/etc/bind/wise/`. Ketik command `cp /etc/bind/db.local /etc/bind/wise/eden.wise.e08.com` untuk membuat salinan file `db.local` sebagai file `eden.wise.e08.com`. Kemudian, buka filenya dengan mengetik command `nano /etc/bind/wise/eden.wise.e08.com` dan ganti isinya sesuai dengan script berikut.
+
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     eden.wise.e08.com. root.eden.wise.e08.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      eden.wise.e08.com.
+@       IN      A       192.196.2.3 ; IP Eden
+www     IN      CNAME   eden.wise.e08.com.
+```
+
+Terakhir, ketik command `service bind9 restart` pada web console node WISE untuk me-restart aplikasi bind9 beserta seluruh konfigurasinya. Kemudian, `ping eden.wise.e08.com` dan `ping www.eden.wise.e08.com` pada web console klien untuk mengecek kesuksesannya.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/3.0.png" width=50%>
 
 ## No. 4
 ### Soal
