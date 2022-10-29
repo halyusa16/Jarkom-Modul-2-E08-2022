@@ -214,6 +214,40 @@ Terakhir, ketik command `service bind9 restart` pada web console node WISE untuk
 ### Soal
 Agar dapat tetap dihubungi jika server WISE bermasalah, buatlah juga Berlint sebagai DNS Slave untuk domain utama.
 ### Jawaban
+Kita mengedit file `named.conf.local` dengan cara mengetik command `nano /etc/bind/named.conf.local` pada web console node WISE dan menambahkan script berikut di zone wise.e08.com. Kita menggunakan IP Berlin karena node Berlint merupakan DNS Slave kita.
+
+```
+        notify yes;
+        also-notify { 192.196.2.2; }; // IP Berlint
+        allow-transfer { 192.196.2.2; }; // IP Berlint
+
+```
+
+sehingga menjadi
+
+```
+zone "wise.e08.com" {
+        type master;
+        notify yes;
+        also-notify { 192.196.2.2; }; // IP Berlint
+        allow-transfer { 192.196.2.2; }; // IP Berlint
+        file "/etc/bind/wise/wise.e08.com";
+};
+```
+
+Lalu, lakukan restart aplikasi bind9 dengan mengetik command `service bind9 restart` pada web console node WISE.
+Kita belum selesai. Kita perlu membuat zone wise.e08.com pada node Berlint. Oleh karena itu, lakukan instalasi aplikasi bind9 pada node Berlint sama seperti langkah di nomor 2, `apt-get update` pada web console node Berlint untuk mengupdate sistemnya dan `apt-get install bind9 -y` untuk menginstal aplikasi bind9. Kemudian, buka file `named.conf.local` di folder `/etc/bind/` dengan mengetik command `nano /etc/bind/named.conf.local` pada web console node Berlint. Ganti isinya dengan script berikut.
+
+```
+zone "wise.e08.com" {
+    type slave;
+    masters { 192.196.3.2; }; // IP WISE
+    file "/var/lib/bind/wise.e08.com";
+};
+```
+Terakhir, lakukan restart aplikasi bind9 dengan mengetik command `service bind9 restart` pada web console node Berlint. Untuk mengecek apakah node Berlint sudah berjalan dengan sukses sebagai DNS Slave, kita matikan aplikasi bind9 pada node WISE sebagai DNS Master dengan mengetik `service bind9 stop` pada web console node WISE. Selain itu, kita juga perlu menambahkan IP DNS Slave pada konfigurasi nameserver klien. Ketik command `nano /etc/resolv.conf` pada web console klien dan tambahkan script `nameserver 192.196.2.2 # IP Berlint` di bagian paling bawah script. Karena `ping wise.e08.com`, `ping www.wise.e08.com`, dan `ping eden.wise.e08.com` masih dapat dilakukan, berarti DNS Slave berjalan dengan sukses.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/5.0.png" width=50%>
 
 ## No. 6
 ### Soal
