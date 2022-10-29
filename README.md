@@ -97,7 +97,7 @@ iface eth0 inet static
 
 </ul>
 
-Kemudian, agar dapat mengakses jaringan luar, kita klik kanan pada node Ostania, lalu pilih `Web console` untuk membuka web console dan ketikkan `iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.196.0.0/16`. Selain itu, kita juga perlu mengubah nameserver pada klien (node SSS dan Garden) menggunakan IP DNS yang sama pada node Ostania. Untuk melihatnya, ketikkan command `nano /etc/resolv.conf` pada web console node Ostania dan copy-kan isinya. Kemudian, ketikkan command `nano /etc/resolv.conf` pada web console klien dan ganti isinya dengan yang sudah di-copy tadi. Terakhir, untuk mengecek apakah klien sudah terhubung dengan jaringan luar, ketikkan command `ping google.com` pada web console klien.
+Kemudian, agar dapat mengakses jaringan luar, kita klik kanan pada node Ostania, lalu pilih `Web console` untuk membuka web console dan ketikkan `iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.196.0.0/16`. Selain itu, kita juga perlu mengubah nameserver pada masing-masing node (node SSS, Garden, Berlint, Eden, dan WISE) menggunakan IP DNS yang sama pada node Ostania. Untuk melihatnya, ketikkan command `nano /etc/resolv.conf` pada web console node Ostania dan copy-kan isinya. Kemudian, ketikkan command `nano /etc/resolv.conf` pada web console masing-masing node dan ganti isinya dengan yang sudah di-copy tadi. Terakhir, untuk mengecek apakah klien sudah terhubung dengan jaringan luar, ketikkan command `ping google.com` pada web console masing-masing node.
 
 <img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/1.1.png" width=50%>
 
@@ -105,6 +105,39 @@ Kemudian, agar dapat mengakses jaringan luar, kita klik kanan pada node Ostania,
 ### Soal
 Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.yyy.com dengan alias www.wise.yyy.com pada folder wise.
 ### Jawaban
+Langkah awal yang perlu kita lakukan adalah mengupdate sistem node WISE agar dapat menginstal aplikasi bind9. Ketikkan command `apt-get update` pada web console node WISE untuk mengupdate sistemnya, lalu `apt-get install bind9 -y` untuk menginstal aplikasi bind9. Setelah itu, buka file `named.conf.local` dengan cara mengetik command `nano /etc/bind/named.conf.local` pada web console node WISE. Kemudian ganti isinya dengan script berikut.
+
+```
+zone "wise.e08.com" {
+	type master;
+	file "/etc/bind/wise/wise.e08.com";
+};
+```
+
+Kita perlu membuat file bernama `wise.e08.com` dengan di folder `/etc/bind/wise/`, untuk itu ketik command `mkdir /etc/bind/wise` untuk membuat folder wise dan `cp /etc/bind/db.local /etc/bind/wise/wise.e08.com` untuk membuat salinan file `db.local` sebagai file `wise.e08.com`. Kemudian, buka filenya dengan mengetik command `nano /etc/bind/wise/wise.e08.com` dan ganti isinya sesuai dengan script berikut.
+
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     wise.e08.com. root.wise.e08.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      wise.e08.com.
+@       IN      A       192.196.3.2 ; IP WISE
+@       IN      AAAA    ::1
+www     IN      CNAME   wise.e08.com.
+```
+
+Terakhir, ketik command `service bind9 restart` pada web console node WISE untuk me-restart aplikasi bind9 beserta seluruh konfigurasinya.
+Untuk mengecek apakah website utama kita sudah selesai dan bisa diakses oleh klien (node SSS dan Garden), pertama-tama kita harus mengubah konfigurasi nameserver pada klien. Ketik `nano /etc/resolv.conf` pada web console klien dan ganti isinya dengan IP DNS Master (node WISE) yaitu 192.196.3.2 `nameserver 192.196.3.2 # IP WISE`. Kemudian, `ping wise.e08.com` dan `ping www.wise.e08.com` untuk mengecek kesuksesannya.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/2.0.png" width=50%>
 
 ## No. 3
 ### Soal
