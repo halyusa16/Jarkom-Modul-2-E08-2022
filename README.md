@@ -179,6 +179,36 @@ Terakhir, ketik command `service bind9 restart` pada web console node WISE untuk
 ### Soal
 Buat juga reverse domain untuk domain utama.
 ### Jawaban
+Kita perlu membuat zone baru. Ketik command `nano /etc/bind/named.conf.local` pada web console node WISE untuk membuka file `named.conf.local`, lalu tambahkan script berikut di bagian paling bawah script.
+
+```
+zone "3.196.192.in-addr.arpa" {
+        type master;
+        file "/etc/bind/wise/3.196.192.in-addr.arpa";
+};
+```
+
+Sama seperti langkah di nomor 2 dan 3, kita perlu membuat file baru bernama `3.196.192.in-addr.arpa` di folder `/etc/bind/wise/`. Ketik command `cp /etc/bind/db.local /etc/bind/wise/3.196.192.in-addr.arpa` untuk membuat salinan file `db.local` sebagai file `3.196.192.in-addr.arpa`. Kemudian, buka filenya dengan mengetik command `nano /etc/bind/wise/3.196.192.in-addr.arpa` dan ganti isinya sesuai dengan script berikut.
+
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     wise.e08.com. root.wise.e08.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+3.196.192.in-addr.arpa.       IN      NS      wise.e08.com.
+2                             IN      PTR     wise.e08.com.
+```
+
+Terakhir, ketik command `service bind9 restart` pada web console node WISE untuk me-restart aplikasi bind9 beserta seluruh konfigurasinya. Kemudian, untuk mengecek kesuksesannya, ketik command `host -t PTR 192.196.3.2` pada web console klien. Pastikan sudah menginstal package dnsutils. Jika belum, ketik command `apt-get install dnsutils` pada web console klien sebelumnya. Hal yang perlu juga diperhatikan agar dapat menginstal package dnsutils yaitu ubah nameserver pada klien di /etc/resolv.conf sesuai dengan nameserver pada node Ostania di /etc/resolv.conf dan lakukan update dengan cara mengetik command `apt-get update` pada web console klien. Jangan lupa untuk mengubah kembali nameserver pada klien di /etc/resolv.conf sesuai dengan IP DNS Master `nameserver 192.196.3.2 # IP WISE` agar command `host -t PTR 192.196.3.2` berjalan sukses.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/4.0.png" width=50%>
 
 ## No. 5
 ### Soal
