@@ -293,6 +293,39 @@ Terakhir, lakukan restart aplikasi bind9 dengan mengetik command `service bind9 
 ### Soal
 Untuk informasi yang lebih spesifik mengenai Operation Strix, buatlah subdomain melalui Berlint dengan akses strix.operation.wise.yyy.com dengan alias www.strix.operation.wise.yyy.com yang mengarah ke Eden.
 ### Jawaban
+Buka file `named.conf.local` dengan cara mengetik command `nano /etc/bind/named.conf.local` pada web console node Berlint. Kemudian tambahkan script berikut di bagian paling bawah script.
+
+```
+zone "strix.operation.wise.yyy.com" {
+	type master;
+	file "/etc/bind/operation/strix.operation.wise.yyy.com";
+};
+```
+
+Kita perlu membuat file bernama `strix.operation.wise.yyy.com` di folder `/etc/bind/operation/`, untuk itu ketik command `cp /etc/bind/db.local /etc/bind/operation/strix.operation.wise.yyy.com` untuk membuat salinan file `db.local` sebagai file `strix.operation.wise.yyy.com`. Kemudian, buka filenya dengan mengetik command `nano /etc/bind/operation/strix.operation.wise.yyy.com` dan ganti isinya sesuai dengan script berikut.
+
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     strix.operation.wise.yyy.com. root.strix.operation.wise.yyy.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      strix.operation.wise.yyy.com.
+@       IN      A       192.196.2.3 ; IP Eden
+@       IN      AAAA    ::1
+www     IN      CNAME   strix.operation.wise.yyy.com.
+```
+
+Terakhir, ketik command `service bind9 restart` pada web console node Berlint untuk me-restart aplikasi bind9 beserta seluruh konfigurasinya.
+Untuk mengecek apakah website kita sudah selesai dan bisa diakses oleh klien (node SSS dan Garden), `ping strix.operation.wise.yyy.com` dan `ping www.strix.operation.wise.yyy.com`.
+
+<img src="https://github.com/immanuelmtpardede/Jarkom-Modul-2-E08-2022/blob/main/img/7.0.png" width=50%>
 
 ## No. 8
 ### Soal
